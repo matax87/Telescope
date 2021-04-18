@@ -264,6 +264,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				318B708C262C49F600ABAF7F /* PBXTargetDependency */,
 			);
 			name = Telescope;
 			packageProductDependencies = (
@@ -435,6 +436,10 @@
 			isa = PBXTargetDependency;
 			target = 3127AAFE2626E22900C3399B /* Telescope */;
 			targetProxy = 3127AB212626E22A00C3399B /* PBXContainerItemProxy */;
+		};
+		318B708C262C49F600ABAF7F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 318B708B262C49F600ABAF7F /* TelescopeLib */;
 		};
 /* End PBXTargetDependency section */
 
@@ -752,6 +757,10 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		312F9DE6262896050050B546 /* TelescopeLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TelescopeLib;
+		};
+		318B708B262C49F600ABAF7F /* TelescopeLib */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TelescopeLib;
 		};

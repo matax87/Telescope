@@ -25,8 +25,13 @@ class MainViewController: UIViewController {
 
     private lazy var resultsVC: ListViewController = {
         let result = self.viewControllerFactory.makeListViewController()
-        result.scrollViewDidScrollHandler = { [weak self] in
-            self?.pagination(scrollView: $0)
+        result.refreshControl.addTarget(
+            self,
+            action: #selector(refresh(sender:)),
+            for: .valueChanged
+        )
+        result.willDisplayLastItemHandler = { [weak self] in
+            self?.viewModel.fetchMoreStargazers()
         }
         return result
     }()
@@ -52,6 +57,7 @@ class MainViewController: UIViewController {
         setupViewHierarchy()
         setupChilds()
         setupBindings()
+        viewModel.selectedRepository = "matax87/texowl"
     }
 }
 
@@ -59,7 +65,7 @@ class MainViewController: UIViewController {
 extension MainViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
-        viewModel.repository = searchBar.text
+        viewModel.selectedRepository = searchBar.text
     }
 }
 
@@ -75,7 +81,14 @@ private extension MainViewController {
     }
 
     func setupBindings() {
-        viewModel.loadingPublisher
+        viewModel.$selectedRepository
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak searchBar] in
+                searchBar?.text = $0
+            })
+            .store(in: &subscriptions)
+
+        viewModel.$isLoading
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak resultsVC] isLoading in
                 guard let refreshControl = resultsVC?.refreshControl
@@ -89,16 +102,18 @@ private extension MainViewController {
             })
             .store(in: &subscriptions)
 
-        viewModel.errorPublisher
+        viewModel.$error
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] error in
-                self?.showError(error)
+            .sink { [weak self] in
+                if let error = $0 {
+                    self?.showError(error)
+                }
             }.store(in: &subscriptions)
 
-        viewModel.stargazersPublisher
+        viewModel.$stargazers
             .receive(on: DispatchQueue.main)
             .sink { [weak resultsVC] in
-                resultsVC?.items = $0
+                resultsVC?.items = $0 ?? []
             }
             .store(in: &subscriptions)
     }
@@ -114,13 +129,10 @@ private extension MainViewController {
     }
 }
 
-// MARK: Private Pagination APIs
+// MARK: Private Refresh APIs
 private extension MainViewController {
-    func pagination(scrollView: UIScrollView) {
-        guard scrollView.checkIfNextPageIsRequired()
-        else { return }
-
-        viewModel.fetchMoreStargazers()
+    @objc func refresh(sender: Any?) {
+        viewModel.refreshStargazers()
     }
 }
 
@@ -128,6 +140,7 @@ private extension UIScrollView {
     func checkIfNextPageIsRequired() -> Bool {
         let yContentOffset = contentOffset.y
         let contentHeight = contentSize.height
+        print(yContentOffset, contentHeight, bounds.height)
         return yContentOffset >= contentHeight - bounds.height
     }
 }

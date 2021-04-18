@@ -12,19 +12,13 @@ import StargazerApiClientCombine
 
 public final class MainViewModel {
     // MARK: Public Publishers
-    public var loadingPublisher: AnyPublisher<Bool, Never> {
-        loadingSubject.eraseToAnyPublisher()
-    }
+    @Published public var selectedRepository: String? = nil
 
-    public var errorPublisher: AnyPublisher<Error, Never> {
-        errorSubject.eraseToAnyPublisher()
-    }
+    @Published public private(set) var isLoading = false
+    @Published public private(set) var error: Error?
+    @Published public private(set) var stargazers: [Stargazer]?
 
-    public var stargazersPublisher: AnyPublisher<[Stargazer], Never> {
-        stargazersSubject.eraseToAnyPublisher()
-    }
-
-    @Published public var repository: String? = nil
+    @Published public private(set) var hasMoreData = true
 
     // MARK: Private Combine Properties
     private var subscriptions: Set<AnyCancellable> = []
@@ -39,9 +33,6 @@ public final class MainViewModel {
 
     // MARK: Private Pagination Properties
     private var nextPage: Int?
-    private var currentRepository: String?
-    private var isLoading = false
-    private var hasSeenLastPage = false
 
     // MARK: Initialization
     public init(
@@ -57,77 +48,83 @@ public final class MainViewModel {
     }
 
     // MARK: Public APIs
-    public func fetchStargazers(
-        ofRepository repository: String,
-        refresh: Bool = false
-    ) {
-        guard
-            !isLoading,
-              !hasSeenLastPage
-        else { return }
-
-        let invalidate = refresh || repository != currentRepository
-        if invalidate {
-            nextPage = firstPage
-            hasSeenLastPage = false
-            stargazersSubject.send([])
-        }
-        currentRepository = repository
-
-        fetchStagazerList(
-            of: repository,
-            page: nextPage,
-            pageSize: pageSize
-        )
+    public func fetchStargazers(ofRepository repository: String) {
+        performFetchStargazers(ofRepository: repository)
     }
 
     public func fetchMoreStargazers() {
-        guard let currentRepository = currentRepository
+        guard let selectedRepository = selectedRepository
         else { return }
         
-        fetchStargazers(ofRepository: currentRepository)
+        performFetchStargazers(ofRepository: selectedRepository)
+    }
+
+    public func refreshStargazers() {
+        guard let selectedRepository = selectedRepository
+        else { return }
+
+        performFetchStargazers(
+            ofRepository: selectedRepository,
+            isRefresh: true
+        )
     }
 }
 
 // MARK: Private APIs
 private extension MainViewModel {
     func setupBindings() {
-        $repository
-            .sink { [weak self] repositoryOrNil in
-                if let repository = repositoryOrNil {
-                    self?.fetchStargazers(ofRepository: repository)
+        $selectedRepository
+            .sink { [weak self] selectedRepository in
+                if let nonOptSelectedRepository = selectedRepository {
+                    self?.fetchStargazers(ofRepository: nonOptSelectedRepository)
                 }
             }
             .store(in: &subscriptions)
     }
 
-    func fetchStagazerList(
-        of repositoryName: String,
-        page: Int? = nil,
-        pageSize: Int? = nil
+    func performFetchStargazers(
+        ofRepository repository: String,
+        isRefresh: Bool = false
     ) {
+        guard !isLoading,
+              hasMoreData || isRefresh
+        else { return }
+
+        let invalidate = isRefresh || repository != selectedRepository
+        if invalidate {
+            nextPage = firstPage
+            stargazers = nil
+            hasMoreData = true
+        }
+
+        let page = nextPage
         isLoading = true
-        loadingSubject.send(true)
         stargazerApiClient.fetchStagazerList(
-            of: repositoryName,
+            of: repository,
             page: page,
             pageSize: pageSize
         )
         .sink { [weak self] completion in
             self?.isLoading = false
-            self?.loadingSubject.send(false)
 
             switch completion {
             case .failure(let error):
-                self?.errorSubject.send(error)
+                self?.error = error
             case .finished:
                 break
             }
         } receiveValue: { [weak self] response in
-            self?.nextPage = response.pagination.next
-            self?.hasSeenLastPage = response.pagination.next == nil
-            let currentItems = self?.stargazersSubject.value ?? []
-            self?.stargazersSubject.send(currentItems + response.items)
+            guard let self = self
+            else { return }
+
+            self.nextPage = response.pagination.next
+            self.hasMoreData = response.pagination.last == page ||
+                response.pagination.next != nil
+            if let stargazers = self.stargazers {
+                self.stargazers = stargazers + response.items
+            } else {
+                self.stargazers = response.items
+            }
         }
         .store(in: &subscriptions)
     }

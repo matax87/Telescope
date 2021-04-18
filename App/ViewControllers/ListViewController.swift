@@ -20,7 +20,7 @@ class ListViewController: UIViewController {
             else { return }
 
             let animated = view.window != nil
-            updateUI(stargazer: items, animated: animated)
+            updateUI(stargazers: items, animated: animated)
         }
     }
     
@@ -28,28 +28,36 @@ class ListViewController: UIViewController {
 
     var imageFetcher: ImageFetcherType!
 
-    var scrollViewDidScrollHandler: ((UIScrollView) -> Void)?
+    var willDisplayLastItemHandler: (() -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         configureViewHierarchy()
         configureDataSource()
-        updateUI(stargazer: items, animated: false)
+        updateUI(stargazers: items, animated: false)
     }
 }
 
 // MARK: UICollectionViewDelegate
 extension ListViewController: UICollectionViewDelegate {
-    // MARK: UIScrollViewDelegate
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        scrollViewDidScrollHandler?(scrollView)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        if
+            let lastItem = items.last,
+            let lastItemIndexPath = dataSource.indexPath(for: lastItem),
+            indexPath == lastItemIndexPath {
+            willDisplayLastItemHandler?()
+        }
     }
 }
 
 // MARK: Private APIs
 private extension ListViewController {
-    typealias Cell = UIIdentificableCollectionViewCell<URL>
+    typealias ListCell = UIIdentifiableCollectionViewListCell<URL>
 
     static let defaultImage = UIImage(
         systemName: "person.circle.fill",
@@ -60,12 +68,12 @@ private extension ListViewController {
         case main
     }
 
-    func downloadThenSetAvatar(
+    func downloadThenSetImage(
         cell: UICollectionViewCell,
         at indexPath: IndexPath
     ) {
         guard
-            let idCell = cell as? UIIdentificableCollectionViewCell<URL>,
+            let idCell = cell as? UIIdentifiableCollectionViewListCell<URL>,
             let imageLoader = imageFetcher,
             let imageURL = self.imageURL(at: indexPath)
         else { return }
@@ -132,12 +140,12 @@ private extension ListViewController {
     }
 
     func configureDataSource() {
-        let cellRegistration: UICollectionView.CellRegistration<Cell, Stargazer>
+        let cellRegistration: UICollectionView.CellRegistration<ListCell, Stargazer>
         cellRegistration = .init() { cell, indexPath, stargazer in
             let imageURLOrNil = self.imageURL(at: indexPath)
             cell.id = imageURLOrNil
 
-            var content = UIListContentConfiguration.cell()
+            var content = cell.defaultContentConfiguration()
             content.text = stargazer.user.login
             content.textProperties.font = .preferredFont(forTextStyle: .title3)
             content.textProperties.numberOfLines = 0
@@ -150,15 +158,9 @@ private extension ListViewController {
                let image = self.imageFetcher[imageURL] {
                 content.image = image
             } else {
-                self.downloadThenSetAvatar(cell: cell, at: indexPath)
+                self.downloadThenSetImage(cell: cell, at: indexPath)
             }
             cell.contentConfiguration = content
-
-            var background = UIBackgroundConfiguration.listPlainCell()
-            background.cornerRadius = 8
-            background.strokeColor = .systemGray3
-            background.strokeWidth = 1.0 / cell.traitCollection.displayScale
-            cell.backgroundConfiguration = background
         }
 
         dataSource = .init(
@@ -189,11 +191,11 @@ private extension ListViewController {
         collectionView.prefetchDataSource = self
     }
 
-    func updateUI(stargazer: [Stargazer], animated: Bool) {
+    func updateUI(stargazers: [Stargazer], animated: Bool) {
         currentSnapshot = NSDiffableDataSourceSnapshot<Section, Stargazer>()
 
         currentSnapshot.appendSections([.main])
-        currentSnapshot.appendItems(stargazer, toSection: .main)
+        currentSnapshot.appendItems(stargazers, toSection: .main)
 
         dataSource.apply(currentSnapshot, animatingDifferences: animated)
     }
@@ -237,8 +239,8 @@ extension ListViewController: UICollectionViewDataSourcePrefetching {
     }
 }
 
-private class UIIdentificableCollectionViewCell<T>:
-    UICollectionViewCell,
+private class UIIdentifiableCollectionViewListCell<T>:
+    UICollectionViewListCell,
     Identifiable
 {
     var id: T!
