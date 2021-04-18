@@ -15,7 +15,6 @@
 		3127AB1A2626E22A00C3399B /* TelescopeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3127AB192626E22A00C3399B /* TelescopeTests.swift */; };
 		3127AB252626E22A00C3399B /* TelescopeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3127AB242626E22A00C3399B /* TelescopeUITests.swift */; };
 		312F9DE7262896050050B546 /* TelescopeLib in Frameworks */ = {isa = PBXBuildFile; productRef = 312F9DE6262896050050B546 /* TelescopeLib */; };
-		312F9DF0262897670050B546 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 312F9DEE262897670050B546 /* Main.storyboard */; };
 		312F9DF926289C830050B546 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312F9DF726289C830050B546 /* Cell.swift */; };
 		312F9DFA26289C830050B546 /* Cell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 312F9DF826289C830050B546 /* Cell.xib */; };
 		316E92042629AA1B007E5E6E /* ServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316E92032629AA1B007E5E6E /* ServiceFactory.swift */; };
@@ -66,7 +65,6 @@
 		3127AB202626E22A00C3399B /* TelescopeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TelescopeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3127AB242626E22A00C3399B /* TelescopeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelescopeUITests.swift; sourceTree = "<group>"; };
 		3127AB262626E22A00C3399B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		312F9DEF262897670050B546 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		312F9DF726289C830050B546 /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		312F9DF826289C830050B546 /* Cell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Cell.xib; sourceTree = "<group>"; };
 		316E92032629AA1B007E5E6E /* ServiceFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceFactory.swift; sourceTree = "<group>"; };
@@ -241,7 +239,6 @@
 				3127AB0B2626E22A00C3399B /* Assets.xcassets */,
 				3127AB102626E22A00C3399B /* Info.plist */,
 				3127AB0D2626E22A00C3399B /* LaunchScreen.storyboard */,
-				312F9DEE262897670050B546 /* Main.storyboard */,
 				31F067922629E7A6004C1AF8 /* Localizable.strings */,
 			);
 			path = Resources;
@@ -355,7 +352,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				312F9DFA26289C830050B546 /* Cell.xib in Resources */,
-				312F9DF0262897670050B546 /* Main.storyboard in Resources */,
 				31F067902629E7A6004C1AF8 /* Localizable.strings in Resources */,
 				3127AB0F2626E22A00C3399B /* LaunchScreen.storyboard in Resources */,
 				3127AB0C2626E22A00C3399B /* Assets.xcassets in Resources */,
@@ -446,14 +442,6 @@
 				3127AB0E2626E22A00C3399B /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		312F9DEE262897670050B546 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				312F9DEF262897670050B546 /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		31F067922629E7A6004C1AF8 /* Localizable.strings */ = {
