@@ -102,39 +102,10 @@ private extension ListViewController {
 
     func createLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
-            let columns = self.columnCount(for: layoutEnvironment)
-
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(0.2),
-
-                heightDimension: .fractionalHeight(1.0)
+            NSCollectionLayoutSection.list(
+                using: .init(appearance: .plain),
+                layoutEnvironment: layoutEnvironment
             )
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(
-                top: 2,
-                leading: 2,
-                bottom: 2,
-                trailing: 2
-            )
-
-            let groupSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(60)
-            )
-            let group = NSCollectionLayoutGroup.horizontal(
-                layoutSize: groupSize,
-                subitem: item,
-                count: columns
-            )
-
-            let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets = NSDirectionalEdgeInsets(
-                top: 5,
-                leading: 5,
-                bottom: 5,
-                trailing: 5
-            )
-            return section
         }
         return layout
     }
