@@ -15,7 +15,8 @@ public typealias StargazerNetworkResult =
 
 public protocol StargazerApiClientType {
     func fetchStagazerList(
-        of repository: Repository,
+        ofRepositoryWithOwner owner: String,
+        name: String,
         page: Int?,
         pageSize: Int?,
         completionHandler: @escaping StargazerNetworkResult
@@ -23,34 +24,17 @@ public protocol StargazerApiClientType {
 }
 
 extension StargazerApiClientType {
-    public func fetchStagazerList(
-        of repositoryName: String,
-        page: Int? = nil,
-        pageSize: Int? = nil,
-        completionHandler: @escaping StargazerNetworkResult
-    ) -> NTBCancellable {
-        do {
-            let repository = try Repository(value: repositoryName)
-            return fetchStagazerList(
-                of: repository,
-                page: page,
-                pageSize: pageSize,
-                completionHandler: completionHandler
-            )
-        } catch {
-            completionHandler(.failure(error))
-            return NTBAnyCancellable {}
-        }
-    }
 
     public func fetchStagazerList(
-        of repository: Repository,
+        ofRepositoryWithOwner owner: String,
+        name: String,
         page: Int? = nil,
         pageSize: Int? = nil,
         completionHandler: @escaping StargazerNetworkResult
     ) -> NTBCancellable {
         fetchStagazerList(
-            of: repository,
+            ofRepositoryWithOwner: owner,
+            name: name,
             page: page,
             pageSize: pageSize,
             completionHandler: completionHandler
@@ -69,13 +53,15 @@ public final class StargazerApiClient: StargazerApiClientType {
     }
 
     public func fetchStagazerList(
-        of repository: Repository,
+        ofRepositoryWithOwner owner: String,
+        name: String,
         page: Int?,
         pageSize: Int?,
         completionHandler: @escaping StargazerNetworkResult
     ) -> NTBCancellable {
         let url = Endpoint.listStargazers(
-            of: repository,
+            ofRepositoryWithOwner: owner,
+            name: name,
             page: page,
             pageSize: pageSize
         )

@@ -1,6 +1,6 @@
 //
 //  BaseCoordinator.swift
-//  Stargazers
+//  Telescope
 //
 //  Created by Matteo Matassoni on 16/04/2021.
 //

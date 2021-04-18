@@ -10,7 +10,8 @@ import NetworkToolbox
 
 extension Endpoint {
     static func listStargazers(
-        of repository: Repository,
+        ofRepositoryWithOwner owner: String,
+        name: String,
         page pageOrNil: Int? = nil,
         pageSize pageSizeOrNil: Int? = nil
     ) -> Self {
@@ -29,7 +30,7 @@ extension Endpoint {
         }
 
         return Endpoint(
-            path: "repos/\(repository)/stargazers",
+            path: "repos/\(owner)/\(name)/stargazers",
             queryItems: queryItems
         )
     }

@@ -1,6 +1,6 @@
 //
 //  ContainerViewController.swift
-//  Stargazers
+//  Telescope
 //
 //  Created by Matteo Matassoni on 16/04/2021.
 //
@@ -37,8 +37,9 @@ class ContainerViewController: UIViewController {
         self.init(content: nil)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("\(#function) has not been implemented")
     }
 
     override func viewDidLoad() {

@@ -1,6 +1,6 @@
 //
 //  DependencyContainer.swift
-//  Stargazers
+//  Telescope
 //
 //  Created by Matteo Matassoni on 16/04/2021.
 //
@@ -32,8 +32,12 @@ extension DependencyContainer: ServiceFactory {
 
 // MARK: ViewModelFactory
 extension DependencyContainer: ViewModelFactory {
-    func makeMainViewModel() -> MainViewModel {
-        MainViewModel(stargazerApiClient: makeStargazerApiClient())
+    func makeFetcherViewModel() -> FetcherViewModel {
+        FetcherViewModel(stargazerApiClient: makeStargazerApiClient())
+    }
+
+    func makeSelectRepositoryViewModel() -> SelectRepositoryViewModel {
+        SelectRepositoryViewModel()
     }
 }
 
@@ -47,7 +51,8 @@ extension DependencyContainer: ViewControllerFactory {
 
     func makeMainViewController() -> MainViewController {
         MainViewController(
-            viewModel: makeMainViewModel(),
+            selectRepositoryViewModel: makeSelectRepositoryViewModel(),
+            fetcherViewModel: makeFetcherViewModel(),
             viewControllerFactory: self
         )
     }

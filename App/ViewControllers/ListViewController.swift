@@ -1,6 +1,6 @@
 //
 //  ListViewController.swift
-//  Stargazers
+//  Items
 //
 //  Created by Matteo Matassoni on 16/04/2021.
 //
@@ -9,18 +9,21 @@ import UIKit
 import StargazerApiClient
 import ImageFetcher
 
+// MARK: - ListViewController
 class ListViewController: UIViewController {
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Stargazer>! = nil
-    private var currentSnapshot: NSDiffableDataSourceSnapshot<Section, Stargazer>! = nil
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
+    private var currentSnapshot: NSDiffableDataSourceSnapshot<Section, Item>! = nil
     private var collectionView: UICollectionView! = nil
 
-    var items: [Stargazer] = [] {
+    typealias Item = Stargazer
+    
+    var items: [Item] = [] {
         didSet {
             guard isViewLoaded
             else { return }
 
             let animated = view.window != nil
-            updateUI(stargazers: items, animated: animated)
+            updateUI(items: items, animated: animated)
         }
     }
     
@@ -35,7 +38,7 @@ class ListViewController: UIViewController {
 
         configureViewHierarchy()
         configureDataSource()
-        updateUI(stargazers: items, animated: false)
+        updateUI(items: items, animated: false)
     }
 }
 
@@ -101,23 +104,22 @@ private extension ListViewController {
     }
 
     func createLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
+        UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
             NSCollectionLayoutSection.list(
                 using: .init(appearance: .plain),
                 layoutEnvironment: layoutEnvironment
             )
         }
-        return layout
     }
 
     func configureDataSource() {
-        let cellRegistration: UICollectionView.CellRegistration<ListCell, Stargazer>
-        cellRegistration = .init() { cell, indexPath, stargazer in
+        let cellRegistration: UICollectionView.CellRegistration<ListCell, Item>
+        cellRegistration = .init() { cell, indexPath, item in
             let imageURLOrNil = self.imageURL(at: indexPath)
             cell.id = imageURLOrNil
 
             var content = cell.defaultContentConfiguration()
-            content.text = stargazer.user.login
+            content.text = item.user.login
             content.textProperties.font = .preferredFont(forTextStyle: .title3)
             content.textProperties.numberOfLines = 0
             content.image = Self.defaultImage
@@ -136,11 +138,11 @@ private extension ListViewController {
 
         dataSource = .init(
             collectionView: collectionView
-        ) { collectionView, indexPath, stargazer in
+        ) { collectionView, indexPath, item in
             collectionView.dequeueConfiguredReusableCell(
                 using: cellRegistration,
                 for: indexPath,
-                item: stargazer
+                item: item
             )
         }
     }
@@ -162,11 +164,11 @@ private extension ListViewController {
         collectionView.prefetchDataSource = self
     }
 
-    func updateUI(stargazers: [Stargazer], animated: Bool) {
-        currentSnapshot = NSDiffableDataSourceSnapshot<Section, Stargazer>()
+    func updateUI(items: [Item], animated: Bool) {
+        currentSnapshot = NSDiffableDataSourceSnapshot<Section, Item>()
 
         currentSnapshot.appendSections([.main])
-        currentSnapshot.appendItems(stargazers, toSection: .main)
+        currentSnapshot.appendItems(items, toSection: .main)
 
         dataSource.apply(currentSnapshot, animatingDifferences: animated)
     }
@@ -187,6 +189,7 @@ private extension ListViewController {
     }
 }
 
+// MARK: UICollectionViewDataSourcePrefetching
 extension ListViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -210,6 +213,7 @@ extension ListViewController: UICollectionViewDataSourcePrefetching {
     }
 }
 
+// MARK: - UIIdentifiableCollectionViewListCell
 private class UIIdentifiableCollectionViewListCell<T>:
     UICollectionViewListCell,
     Identifiable

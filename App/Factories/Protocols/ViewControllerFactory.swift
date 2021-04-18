@@ -1,6 +1,6 @@
 //
 //  ViewControllerFactory.swift
-//  Federcoop Merchant
+//  Telescope
 //
 //  Created by Matteo Matassoni on 16/04/2021.
 //

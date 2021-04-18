@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  Stargazers
+//  Telescope
 //
 //  Created by Matteo Matassoni on 14/04/2021.
 //

@@ -1,5 +1,5 @@
 //
-//  MainViewModel.swift
+//  FetcherViewModel.swift
 //  ViewModels
 //
 //  Created by Matteo Matassoni on 16/04/2021.
@@ -10,9 +10,9 @@ import Combine
 import StargazerApiClient
 import StargazerApiClientCombine
 
-public final class MainViewModel {
+public final class FetcherViewModel {
     // MARK: Public Publishers
-    @Published public var selectedRepository: String? = nil
+    @Published public var selectedRepository: Repository? = nil
 
     @Published public private(set) var isLoading = false
     @Published public private(set) var error: Error?
@@ -48,10 +48,6 @@ public final class MainViewModel {
     }
 
     // MARK: Public APIs
-    public func fetchStargazers(ofRepository repository: String) {
-        performFetchStargazers(ofRepository: repository)
-    }
-
     public func fetchMoreStargazers() {
         guard let selectedRepository = selectedRepository
         else { return }
@@ -63,6 +59,7 @@ public final class MainViewModel {
         guard let selectedRepository = selectedRepository
         else { return }
 
+        invalidate()
         performFetchStargazers(
             ofRepository: selectedRepository,
             isRefresh: true
@@ -71,36 +68,34 @@ public final class MainViewModel {
 }
 
 // MARK: Private APIs
-private extension MainViewModel {
+private extension FetcherViewModel {
     func setupBindings() {
         $selectedRepository
-            .sink { [weak self] selectedRepository in
-                if let nonOptSelectedRepository = selectedRepository {
-                    self?.fetchStargazers(ofRepository: nonOptSelectedRepository)
-                }
+            .sink { [weak self] in
+                self?.selectedRepositoryDidChange($0)
             }
             .store(in: &subscriptions)
     }
 
+    func invalidate() {
+        nextPage = firstPage
+        stargazers = nil
+        hasMoreData = true
+    }
+
     func performFetchStargazers(
-        ofRepository repository: String,
+        ofRepository repository: Repository,
         isRefresh: Bool = false
     ) {
         guard !isLoading,
-              hasMoreData || isRefresh
+              hasMoreData
         else { return }
-
-        let invalidate = isRefresh || repository != selectedRepository
-        if invalidate {
-            nextPage = firstPage
-            stargazers = nil
-            hasMoreData = true
-        }
 
         let page = nextPage
         isLoading = true
         stargazerApiClient.fetchStagazerList(
-            of: repository,
+            ofRepositoryWithOwner: repository.owner,
+            name: repository.name,
             page: page,
             pageSize: pageSize
         )
@@ -127,5 +122,12 @@ private extension MainViewModel {
             }
         }
         .store(in: &subscriptions)
+    }
+
+    func selectedRepositoryDidChange(_ repository: Repository?) {
+        if let repository = repository {
+            invalidate()
+            performFetchStargazers(ofRepository: repository)
+        }
     }
 }

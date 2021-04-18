@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "TelescopeLib",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v14)
     ],
@@ -56,6 +57,9 @@ let package = Package(
             name: "ViewModels",
             dependencies: [
                 "StargazerApiClientCombine"
+            ],
+            resources: [
+                .process("Resources")
             ]
         )
     ]

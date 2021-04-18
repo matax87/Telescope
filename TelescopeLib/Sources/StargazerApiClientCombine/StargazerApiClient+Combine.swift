@@ -11,29 +11,15 @@ import StargazerApiClient
 
 extension StargazerApiClientType {
     public func fetchStagazerList(
-        of repositoryName: String,
+        ofRepositoryWithOwner owner: String,
+        name: String,
         page: Int? = nil,
         pageSize: Int? = nil
     ) -> AnyPublisher<Stargazer.NetworkResponse, Error> {
         Future { promise in
             _ = fetchStagazerList(
-                of: repositoryName,
-                page: page,
-                pageSize: pageSize,
-                completionHandler: promise
-            )
-        }
-        .eraseToAnyPublisher()
-    }
-
-    public func fetchStagazerList(
-        of repository: Repository,
-        page: Int? = nil,
-        pageSize: Int? = nil
-    ) -> AnyPublisher<Stargazer.NetworkResponse, Error> {
-        Future { promise in
-            _ = fetchStagazerList(
-                of: repository,
+                ofRepositoryWithOwner: owner,
+                name: name,
                 page: page,
                 pageSize: pageSize,
                 completionHandler: promise

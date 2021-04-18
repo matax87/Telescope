@@ -1,6 +1,6 @@
 //
-//  StargazersTests.swift
-//  StargazersTests
+//  TelescopeTests.swift
+//  TelescopeTests
 //
 //  Created by Matteo Matassoni on 14/04/2021.
 //

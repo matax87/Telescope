@@ -1,6 +1,6 @@
 //
 //  MainViewController.swift
-//  Stargazers
+//  Telescope
 //
 //  Created by Matteo Matassoni on 14/04/2021.
 //
@@ -8,20 +8,20 @@
 import UIKit
 import Combine
 import ViewModels
-import StargazerApiClient
 
 class MainViewController: UIViewController {
-    let viewModel: MainViewModel
+    let selectRepositoryViewModel: SelectRepositoryViewModel
+    let fetcherViewModel: FetcherViewModel
     let viewControllerFactory: ViewControllerFactory
 
     weak var coordinator: MainCoordinator?
 
     private var subscriptions: Set<AnyCancellable> = []
 
-    private lazy var searchBar: UISearchBar = { searchBar in
-        self.setupSearchBar(searchBar)
-        return searchBar
-    }(UISearchBar())
+    private lazy var searchController: UISearchController = { searchController in
+        self.configureSearchBar(searchController.searchBar)
+        return searchController
+    }(UISearchController(searchResultsController: nil))
 
     private lazy var resultsVC: ListViewController = {
         let result = self.viewControllerFactory.makeListViewController()
@@ -31,17 +31,19 @@ class MainViewController: UIViewController {
             for: .valueChanged
         )
         result.willDisplayLastItemHandler = { [weak self] in
-            self?.viewModel.fetchMoreStargazers()
+            self?.fetcherViewModel.fetchMoreStargazers()
         }
         return result
     }()
 
     // MARK: Initalization
     init(
-        viewModel: MainViewModel,
+        selectRepositoryViewModel: SelectRepositoryViewModel,
+        fetcherViewModel: FetcherViewModel,
         viewControllerFactory: ViewControllerFactory
     ) {
-        self.viewModel = viewModel
+        self.selectRepositoryViewModel = selectRepositoryViewModel
+        self.fetcherViewModel = fetcherViewModel
         self.viewControllerFactory = viewControllerFactory
         super.init(nibName: nil, bundle: nil)
     }
@@ -54,18 +56,16 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupViewHierarchy()
         setupChilds()
         setupBindings()
-        viewModel.selectedRepository = "matax87/texowl"
     }
 }
 
 // MARK: UISearchBarDelegate
 extension MainViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
-        viewModel.selectedRepository = searchBar.text
+        selectRepositoryViewModel.searchedText = searchBar.text
+        searchController.dismiss(animated: true, completion: nil)
     }
 }
 
@@ -73,24 +73,14 @@ extension MainViewController: UISearchBarDelegate {
 private extension MainViewController {
     func setupChilds() {
         embedChild(resultsVC)
-    }
-
-    func setupViewHierarchy() {
-        searchBar.sizeToFit()
-        navigationItem.titleView = searchBar
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 
     func setupBindings() {
-        viewModel.$selectedRepository
+        fetcherViewModel.$isLoading
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak searchBar] in
-                searchBar?.text = $0
-            })
-            .store(in: &subscriptions)
-
-        viewModel.$isLoading
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak resultsVC] isLoading in
+            .sink { [weak resultsVC] isLoading in
                 guard let refreshControl = resultsVC?.refreshControl
                 else { return }
 
@@ -99,32 +89,45 @@ private extension MainViewController {
                 } else {
                     refreshControl.endRefreshing()
                 }
-            })
+            }
             .store(in: &subscriptions)
 
-        viewModel.$error
+        fetcherViewModel.$error
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 if let error = $0 {
                     self?.showError(error)
                 }
-            }.store(in: &subscriptions)
+            }
+            .store(in: &subscriptions)
 
-        viewModel.$stargazers
+        fetcherViewModel.$stargazers
             .receive(on: DispatchQueue.main)
             .sink { [weak resultsVC] in
                 resultsVC?.items = $0 ?? []
             }
             .store(in: &subscriptions)
+
+        selectRepositoryViewModel.$error
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                if let error = $0 {
+                    self?.showError(error)
+                }
+            }
+            .store(in: &subscriptions)
+
+        selectRepositoryViewModel.$selectedRepository
+            .assign(to: &fetcherViewModel.$selectedRepository)
     }
 
-    func setupSearchBar(_ searchBar: UISearchBar) {
+    func configureSearchBar(_ searchBar: UISearchBar) {
         searchBar.placeholder = NSLocalizedString(
             "search_repo_placeholder",
             comment: "Search repository placeholder"
         )
         searchBar.searchTextField.autocapitalizationType = .none
-        searchBar.searchBarStyle = .prominent
+        searchBar.returnKeyType = .done
         searchBar.delegate = self
     }
 }
@@ -132,7 +135,7 @@ private extension MainViewController {
 // MARK: Private Refresh APIs
 private extension MainViewController {
     @objc func refresh(sender: Any?) {
-        viewModel.refreshStargazers()
+        fetcherViewModel.refreshStargazers()
     }
 }
 
