@@ -44,9 +44,16 @@ public extension StargazerApiClientType {
 public final class StargazerApiClient: StargazerApiClientType {
     let networkService: NetworkService
 
-    public init(networkService: NetworkService) {
-        self.networkService = networkService
-            .addingLogger(Logger(subsystem: "io.stargazerapi", category: "networking"))
+    public init(
+        networkService: NetworkService,
+        logger: Logger? = nil
+    ) {
+        var mutableCopy = networkService
+        if let logger = logger {
+            mutableCopy = mutableCopy
+                .addingLogger(logger)
+        }
+        self.networkService = mutableCopy
             .addingStarMediaTypeHeaders()
             .checkingStatusCodes()
     }

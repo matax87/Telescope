@@ -8,6 +8,7 @@
 import Foundation
 import ImageFetcher
 import NetworkToolbox
+import OSLog
 import StargazerApiClient
 import ViewModels
 
@@ -27,7 +28,10 @@ extension DependencyContainer: ServiceFactory {
     }
 
     func makeStargazerApiClient() -> StargazerApiClientType {
-        StargazerApiClient(networkService: networkService)
+        StargazerApiClient(
+            networkService: networkService,
+            logger: makeNetworkingLogger()
+        )
     }
 }
 
@@ -57,6 +61,18 @@ extension DependencyContainer: ViewControllerFactory {
             selectRepositoryViewModel: makeSelectRepositoryViewModel(),
             fetcherViewModel: makeFetcherViewModel(),
             viewControllerFactory: self
+        )
+    }
+}
+
+// MARK: LoggerFactoryFactory
+
+extension DependencyContainer: LoggerFactoryFactory {
+    func makeNetworkingLogger() -> Logger {
+        let bundleId = Bundle.main.bundleIdentifier!
+        return Logger(
+            subsystem: bundleId,
+            category: "Networking"
         )
     }
 }

@@ -24,6 +24,7 @@
 		316E92262629D310007E5E6E /* UIViewController+Children.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316E92252629D310007E5E6E /* UIViewController+Children.swift */; };
 		316E922E2629D566007E5E6E /* UIAlertController+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316E922D2629D566007E5E6E /* UIAlertController+Error.swift */; };
 		316E92332629D612007E5E6E /* UIViewController+ShowError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316E92322629D612007E5E6E /* UIViewController+ShowError.swift */; };
+		31A8E9FD262D5E700009E102 /* LoggerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A8E9FC262D5E700009E102 /* LoggerFactory.swift */; };
 		31B8175226296403000D22CD /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B8175126296403000D22CD /* AppCoordinator.swift */; };
 		31B8175A26296561000D22CD /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B8175926296561000D22CD /* MainCoordinator.swift */; };
 		31B8177526296632000D22CD /* ViewModelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B8177226296632000D22CD /* ViewModelFactory.swift */; };
@@ -74,6 +75,7 @@
 		316E92252629D310007E5E6E /* UIViewController+Children.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Children.swift"; sourceTree = "<group>"; };
 		316E922D2629D566007E5E6E /* UIAlertController+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Error.swift"; sourceTree = "<group>"; };
 		316E92322629D612007E5E6E /* UIViewController+ShowError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+ShowError.swift"; sourceTree = "<group>"; };
+		31A8E9FC262D5E700009E102 /* LoggerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerFactory.swift; sourceTree = "<group>"; };
 		31B8175126296403000D22CD /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		31B8175926296561000D22CD /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 		31B8177226296632000D22CD /* ViewModelFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModelFactory.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 			isa = PBXGroup;
 			children = (
 				31B8177326296632000D22CD /* ViewControllerFactory.swift */,
+				31A8E9FC262D5E700009E102 /* LoggerFactory.swift */,
 				31B8177226296632000D22CD /* ViewModelFactory.swift */,
 				316E92032629AA1B007E5E6E /* ServiceFactory.swift */,
 			);
@@ -379,6 +382,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31A8E9FD262D5E700009E102 /* LoggerFactory.swift in Sources */,
 				316E922E2629D566007E5E6E /* UIAlertController+Error.swift in Sources */,
 				312F9DF926289C830050B546 /* Cell.swift in Sources */,
 				3127AB072626E22900C3399B /* MainViewController.swift in Sources */,
