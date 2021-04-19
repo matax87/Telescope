@@ -1,5 +1,5 @@
-import XCTest
 @testable import NetworkToolbox
+import XCTest
 
 final class EndpointTests: XCTestCase {
     let host = "test"

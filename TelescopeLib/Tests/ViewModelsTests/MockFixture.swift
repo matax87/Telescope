@@ -11,6 +11,6 @@ func mockFixture(
         ),
         let data = try? Data(contentsOf: mockFixturesURL)
     else { fatalError("Mock fixture \(name) not found.") }
-    
+
     return data
 }

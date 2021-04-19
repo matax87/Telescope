@@ -5,8 +5,8 @@
 //  Created by Matteo Matassoni on 16/04/2021.
 //
 
-import Foundation
 import Combine
+import Foundation
 import NetworkToolbox
 import OSLog
 
@@ -23,9 +23,8 @@ public protocol StargazerApiClientType {
     ) -> NTBCancellable
 }
 
-extension StargazerApiClientType {
-
-    public func fetchStagazerList(
+public extension StargazerApiClientType {
+    func fetchStagazerList(
         ofRepositoryWithOwner owner: String,
         name: String,
         page: Int? = nil,
@@ -66,7 +65,7 @@ public final class StargazerApiClient: StargazerApiClientType {
             pageSize: pageSize
         )
         .makeURL(withHost: GithubConstants.Host.api)
-        
+
         let urlRequest = URLRequest(url: url)
 
         return networkService
@@ -88,8 +87,10 @@ public final class StargazerApiClient: StargazerApiClientType {
                     do {
                         // Extract pagination information from http headers
                         let pagination = response
-                            .flatMap { $0 as? HTTPURLResponse }
-                            .flatMap { $0.allHeaderFields }
+                            .flatMap {
+                                ($0 as? HTTPURLResponse)?
+                                    .allHeaderFields
+                            }
                             .flatMap(PaginationParser.parse(httpHeaders:))
                             ?? Pagination()
 

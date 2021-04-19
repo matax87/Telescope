@@ -27,6 +27,7 @@ final class PageLinksParser {
 }
 
 // MARK: Private APIs
+
 private extension PageLinksParser {
     static let linksSeparator: Character = ","
     static let linkParamSeparator: Character = ";"
@@ -50,7 +51,7 @@ private extension PageLinksParser {
                 continue
             }
             linkPart = String(linkPart.dropFirst().dropLast())
-            for i in 1..<segments.count {
+            for i in 1 ..< segments.count {
                 let rel = segments[i]
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                     .split(separator: "=")
@@ -59,7 +60,7 @@ private extension PageLinksParser {
                 }
 
                 var relValue = String(rel[1])
-                if relValue.hasPrefix("\"") && relValue.hasSuffix("\"") {
+                if relValue.hasPrefix("\""), relValue.hasSuffix("\"") {
                     relValue = String(relValue.dropFirst().dropLast())
                 }
 

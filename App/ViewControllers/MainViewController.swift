@@ -5,8 +5,8 @@
 //  Created by Matteo Matassoni on 14/04/2021.
 //
 
-import UIKit
 import Combine
+import UIKit
 import ViewModels
 
 class MainViewController: UIViewController {
@@ -37,6 +37,7 @@ class MainViewController: UIViewController {
     }()
 
     // MARK: Initalization
+
     init(
         selectRepositoryViewModel: SelectRepositoryViewModel,
         fetcherViewModel: FetcherViewModel,
@@ -49,7 +50,7 @@ class MainViewController: UIViewController {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("\(#function) has not been implemented")
     }
 
@@ -62,6 +63,7 @@ class MainViewController: UIViewController {
 }
 
 // MARK: UISearchBarDelegate
+
 extension MainViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         selectRepositoryViewModel.searchedText = searchBar.text
@@ -70,6 +72,7 @@ extension MainViewController: UISearchBarDelegate {
 }
 
 // MARK: Private APIs
+
 private extension MainViewController {
     func setupChilds() {
         embedChild(resultsVC)
@@ -133,8 +136,9 @@ private extension MainViewController {
 }
 
 // MARK: Private Refresh APIs
+
 private extension MainViewController {
-    @objc func refresh(sender: Any?) {
+    @objc func refresh(sender _: Any?) {
         fetcherViewModel.refreshStargazers()
     }
 }

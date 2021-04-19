@@ -1,8 +1,8 @@
-import XCTest
 import Combine
 import MockNetworkServiceImplementations
 import StargazerApiClient
 @testable import ViewModels
+import XCTest
 
 final class FetcherViewModelTests: XCTestCase {
     var subscriptions: Set<AnyCancellable> = []
@@ -48,7 +48,8 @@ final class FetcherViewModelTests: XCTestCase {
         let stargazer = stargazers[0]
         XCTAssertEqual(
             stargazer.user.login,
-            "schacon")
+            "schacon"
+        )
         XCTAssertEqual(
             stargazer.user.avatarUrl,
             "https://avatars.githubusercontent.com/u/70?v=4"

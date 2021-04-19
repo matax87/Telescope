@@ -5,18 +5,19 @@
 //  Created by Matteo Matassoni on 16/04/2021.
 //
 
-import UIKit
-import StargazerApiClient
 import ImageFetcher
+import StargazerApiClient
+import UIKit
 
 // MARK: - ListViewController
+
 class ListViewController: UIViewController {
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
-    private var currentSnapshot: NSDiffableDataSourceSnapshot<Section, Item>! = nil
-    private var collectionView: UICollectionView! = nil
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+    private var currentSnapshot: NSDiffableDataSourceSnapshot<Section, Item>!
+    private var collectionView: UICollectionView!
 
     typealias Item = Stargazer
-    
+
     var items: [Item] = [] {
         didSet {
             guard isViewLoaded
@@ -26,7 +27,7 @@ class ListViewController: UIViewController {
             updateUI(items: items, animated: animated)
         }
     }
-    
+
     var refreshControl = UIRefreshControl()
 
     var imageFetcher: ImageFetcherType!
@@ -43,22 +44,25 @@ class ListViewController: UIViewController {
 }
 
 // MARK: UICollectionViewDelegate
+
 extension ListViewController: UICollectionViewDelegate {
     func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
+        _: UICollectionView,
+        willDisplay _: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
         if
             let lastItem = items.last,
             let lastItemIndexPath = dataSource.indexPath(for: lastItem),
-            indexPath == lastItemIndexPath {
+            indexPath == lastItemIndexPath
+        {
             willDisplayLastItemHandler?()
         }
     }
 }
 
 // MARK: Private APIs
+
 private extension ListViewController {
     typealias ListCell = UIIdentifiableCollectionViewListCell<URL>
 
@@ -96,7 +100,7 @@ private extension ListViewController {
 
     func columnCount(for layoutEnviroment: NSCollectionLayoutEnvironment) -> Int {
         switch layoutEnviroment.container.effectiveContentSize.width {
-        case 0..<600:
+        case 0 ..< 600:
             return 1
         default:
             return 2
@@ -104,7 +108,7 @@ private extension ListViewController {
     }
 
     func createLayout() -> UICollectionViewLayout {
-        UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
+        UICollectionViewCompositionalLayout { _, layoutEnvironment in
             NSCollectionLayoutSection.list(
                 using: .init(appearance: .plain),
                 layoutEnvironment: layoutEnvironment
@@ -114,7 +118,7 @@ private extension ListViewController {
 
     func configureDataSource() {
         let cellRegistration: UICollectionView.CellRegistration<ListCell, Item>
-        cellRegistration = .init() { cell, indexPath, item in
+        cellRegistration = .init { cell, indexPath, item in
             let imageURLOrNil = self.imageURL(at: indexPath)
             cell.id = imageURLOrNil
 
@@ -151,7 +155,8 @@ private extension ListViewController {
         collectionView = UICollectionView(
             frame: view.bounds,
             collectionViewLayout: createLayout(
-            ))
+            )
+        )
         collectionView.autoresizingMask = [
             .flexibleWidth,
             .flexibleHeight
@@ -175,8 +180,8 @@ private extension ListViewController {
 
     func imageURL(at indexPath: IndexPath) -> URL? {
         guard let imageURLString = dataSource.itemIdentifier(for: indexPath)?
-                .user
-                .avatarUrl
+            .user
+            .avatarUrl
         else { return nil }
 
         return URL(string: imageURLString)
@@ -190,9 +195,10 @@ private extension ListViewController {
 }
 
 // MARK: UICollectionViewDataSourcePrefetching
+
 extension ListViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(
-        _ collectionView: UICollectionView,
+        _: UICollectionView,
         prefetchItemsAt indexPaths: [IndexPath]
     ) {
         imageURLs(at: indexPaths)
@@ -205,7 +211,7 @@ extension ListViewController: UICollectionViewDataSourcePrefetching {
     }
 
     func collectionView(
-        _ collectionView: UICollectionView,
+        _: UICollectionView,
         cancelPrefetchingForItemsAt indexPaths: [IndexPath]
     ) {
         imageURLs(at: indexPaths)
@@ -214,10 +220,9 @@ extension ListViewController: UICollectionViewDataSourcePrefetching {
 }
 
 // MARK: - UIIdentifiableCollectionViewListCell
-private class UIIdentifiableCollectionViewListCell<T>:
-    UICollectionViewListCell,
-    Identifiable
-{
+
+private class UIIdentifiableCollectionViewListCell<T>: UICollectionViewListCell,
+    Identifiable {
     var id: T!
 
     override func prepareForReuse() {

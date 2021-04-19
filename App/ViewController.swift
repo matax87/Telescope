@@ -5,14 +5,14 @@
 //  Created by Matteo Matassoni on 14/04/2021.
 //
 
-import UIKit
 import Model
+import UIKit
 
 class StargezerListViewController: UICollectionViewController {
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Stargazer>! = nil
-    private var currentSnapshot: NSDiffableDataSourceSnapshot<Section, Stargazer>! = nil
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Stargazer>!
+    private var currentSnapshot: NSDiffableDataSourceSnapshot<Section, Stargazer>!
 
-    private lazy var model: Model = Model(networkService: URLSession.shared)
+    private lazy var model = Model(networkService: URLSession.shared)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +36,7 @@ private extension StargezerListViewController {
 
     func createLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout {
-            (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            (_: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             let columns = self.columnCount(for: layoutEnvironment.container.effectiveContentSize.width)
 
             let itemSize = NSCollectionLayoutSize(
@@ -76,7 +76,7 @@ private extension StargezerListViewController {
     }
 
     func configureDataSource() {
-        let cellRegistration = UICollectionView.CellRegistration<Cell, Stargazer> { cell, indexPath, stargazer in
+        let cellRegistration = UICollectionView.CellRegistration<Cell, Stargazer> { cell, _, stargazer in
             // Populate the cell with our item description.
             cell.textLabel?.text = stargazer.user.login
         }
@@ -93,9 +93,9 @@ private extension StargezerListViewController {
 
     func handle(_ result: Result<Stargazer.NetworkResponse, Error>) {
         switch result {
-        case .success(let stargazer):
+        case let .success(stargazer):
             updateUI(with: stargazer.items, animated: true)
-        case .failure(let error):
+        case let .failure(error):
             print(error.localizedDescription)
         }
     }
@@ -109,4 +109,3 @@ private extension StargezerListViewController {
         dataSource.apply(currentSnapshot, animatingDifferences: animated)
     }
 }
-

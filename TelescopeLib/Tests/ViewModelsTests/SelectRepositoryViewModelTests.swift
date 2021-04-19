@@ -1,6 +1,6 @@
-import XCTest
 import Combine
 @testable import ViewModels
+import XCTest
 
 final class SelectRepositoryViewModelTests: XCTestCase {
     let viewModel = SelectRepositoryViewModel()

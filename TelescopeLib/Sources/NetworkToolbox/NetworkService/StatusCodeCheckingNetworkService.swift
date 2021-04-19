@@ -22,7 +22,7 @@ public final class StatusCodeCheckingNetworkService: NetworkService {
             let getStatusCodeError = {
                 response
                     .flatMap { $0 as? HTTPURLResponse }
-                    .flatMap { $0.networkError }
+                    .flatMap(\.networkError)
             }
             completionHandler(
                 data,
@@ -52,8 +52,8 @@ private extension HTTPURLResponse {
     }
 }
 
-extension NetworkService {
-    public func checkingStatusCodes() -> NetworkService {
+public extension NetworkService {
+    func checkingStatusCodes() -> NetworkService {
         StatusCodeCheckingNetworkService(wrapped: self)
     }
 }

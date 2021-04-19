@@ -5,43 +5,48 @@
 //  Created by Matteo Matassoni on 17/04/2021.
 //
 
-import UIKit
-import SwiftCache
 import NetworkToolbox
+import SwiftCache
+import UIKit
 
 // MARK: - ImageFetcherError
+
 private enum ImageFetcherError: Error {
     case invalidData(Data?)
 }
 
 // MARK: - ImageFetcherHandler
+
 public typealias ImageFetcherHandler = (Result<UIImage, Error>) -> Void
 
 // MARK: - ImageFetcherHandler
+
 public typealias ImageProcessor = (UIImage) -> UIImage
 
 // MARK: - ImageFetcherType
+
 public protocol ImageFetcherType {
-    subscript(url: URL) -> UIImage? { get }
-    
+    subscript(_: URL) -> UIImage? { get }
+
     subscript(
-        url: URL,
-        default defaultImage: @autoclosure () -> UIImage
+        _: URL,
+        default _: @autoclosure () -> UIImage
     ) -> UIImage { get }
-    
+
     func fetchImage(
         fromUrl url: URL,
         processing: ImageProcessor?,
         completionQueue: DispatchQueue,
         completionHandler: ImageFetcherHandler?
     )
-    
+
     func cancelFetching(fromUrl url: URL)
 }
 
 // MARK: Defaults
-extension ImageFetcherType {
-    public func fetchImage(
+
+public extension ImageFetcherType {
+    func fetchImage(
         fromUrl url: URL,
         processing: ImageProcessor? = nil,
         completionQueue: DispatchQueue = .main,
@@ -57,16 +62,17 @@ extension ImageFetcherType {
 }
 
 // MARK: - ImageFetcher
+
 public final class ImageFetcher: ImageFetcherType {
     let networkService: NetworkService
     // Queue to sync up its internal state (thread-safeness)
     let internalQueue: DispatchQueue
     let imageProccessingQueue: DispatchQueue
-    
+
     private var urlToDownloadedImage: Cache<URL, UIImage> = Cache()
     private var urlToPendingHandlers: [URL: [ImageFetcherHandler]] = [:]
     private var urlToPendingTask: [URL: NTBCancellable] = [:]
-    
+
     public init(
         networkService: NetworkService,
         internalQueue: DispatchQueue = .init(label: "ImageFetcher"),
@@ -77,22 +83,18 @@ public final class ImageFetcher: ImageFetcherType {
         self.internalQueue = internalQueue
         self.imageProccessingQueue = imageProccessingQueue
     }
-    
+
     public subscript(url: URL) -> UIImage? {
-        get {
-            urlToDownloadedImage[url]
-        }
+        urlToDownloadedImage[url]
     }
-    
+
     public subscript(
         url: URL,
         default defaultImage: @autoclosure () -> UIImage
     ) -> UIImage {
-        get {
-            self[url] ?? defaultImage()
-        }
+        self[url] ?? defaultImage()
     }
-    
+
     public func fetchImage(
         fromUrl url: URL,
         processing: ImageProcessor?,
@@ -108,16 +110,17 @@ public final class ImageFetcher: ImageFetcherType {
             )
         }
     }
-    
+
     public func cancelFetching(fromUrl url: URL) {
         guard let task = urlToPendingTask[url]
         else { return }
-        
+
         task.cancel()
     }
 }
 
 // MARK: Private APIs
+
 private extension ImageFetcher {
     func handle(
         _ result: Result<UIImage, Error>,
@@ -147,17 +150,17 @@ private extension ImageFetcher {
         let availableImageOrNil = urlToDownloadedImage[url]
         guard availableImageOrNil == nil
         else { return completionHandler(.success(availableImageOrNil!)) }
-        
+
         var pendingHandlers = urlToPendingHandlers[url] ?? []
         pendingHandlers.append(completionHandler)
         urlToPendingHandlers[url] = pendingHandlers
-        
+
         guard pendingHandlers.count == 1
         else { return }
-        
+
         let request = URLRequest(url: url)
         let task = networkService
-            .fetchData(with: request) { [weak self] data, response, error in
+            .fetchData(with: request) { [weak self] data, _, error in
                 let result: Result<UIImage, Error>
                 switch (data, error) {
                 case let (_, error?):

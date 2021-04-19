@@ -18,7 +18,7 @@ extension Pagination {
     init() {
         self.init(
             first: nil,
-            last: nil, 
+            last: nil,
             next: nil,
             prev: nil
         )
@@ -26,7 +26,9 @@ extension Pagination {
 }
 
 // MARK: Equatable
+
 extension Pagination: Equatable {}
 
 // MARK: Hashable
+
 extension Pagination: Hashable {}

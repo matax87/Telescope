@@ -22,7 +22,7 @@ class BaseCoordinator: Coordinator {
         self.dependencyContainer = dependencyContainer
     }
 
-    func start(animated: Bool) {
+    func start(animated _: Bool) {
         guard type(of: self) != BaseCoordinator.self
         else { preconditionFailure("subclass should implement start function!") }
     }
@@ -31,7 +31,7 @@ class BaseCoordinator: Coordinator {
     /// - Parameter child: child of the parent going to be terminated.
     func sacrifice(child: Coordinator) {
         guard let childPosition = childCoordinators
-                .firstIndex(where: { $0 === child })
+            .firstIndex(where: { $0 === child })
         else { return }
 
         childCoordinators.remove(at: childPosition)

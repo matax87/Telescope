@@ -13,9 +13,11 @@ public struct Stargazer {
 }
 
 // MARK: Equatable
+
 extension Stargazer: Equatable {}
 
 // MARK: Hashable
+
 extension Stargazer: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(user)
@@ -23,10 +25,11 @@ extension Stargazer: Hashable {
 }
 
 // MARK: Decodable
+
 extension Stargazer: Decodable {}
 
-extension Stargazer {
-    public struct NetworkResponse {
+public extension Stargazer {
+    struct NetworkResponse {
         public let items: [Stargazer]
         public let pagination: Pagination
     }

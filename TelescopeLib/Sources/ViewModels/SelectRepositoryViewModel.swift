@@ -5,8 +5,8 @@
 //  Created by Matteo Matassoni on 17/04/2021.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 public final class SelectRepositoryViewModel {
     @Published public var searchedText: String?
@@ -23,6 +23,7 @@ public final class SelectRepositoryViewModel {
 }
 
 // MARK: Private APIs
+
 private extension SelectRepositoryViewModel {
     func setupBindings() {
         $searchedText

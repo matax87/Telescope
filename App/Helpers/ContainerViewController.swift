@@ -38,7 +38,7 @@ class ContainerViewController: UIViewController {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("\(#function) has not been implemented")
     }
 
@@ -133,14 +133,14 @@ class ContainerViewController: UIViewController {
                        delay: 0,
                        options: options,
                        animations: {
-                        to.view.alpha = 1
+                           to.view.alpha = 1
                        }, completion: { finished in
-                        if finished {
-                            to.didMove(toParent: self)
-                            to.endAppearanceTransition()
-                        }
+                           if finished {
+                               to.didMove(toParent: self)
+                               to.endAppearanceTransition()
+                           }
 
-                        completion?(finished)
+                           completion?(finished)
                        })
     }
 
@@ -194,24 +194,25 @@ class ContainerViewController: UIViewController {
                        delay: 0,
                        options: options,
                        animations: {
-                        to.view.alpha = 1
-                        from.view.alpha = 0
+                           to.view.alpha = 1
+                           from.view.alpha = 0
                        }, completion: { finished in
-                        from.view.removeFromSuperview()
-                        from.endAppearanceTransition()
-                        from.removeFromParent()
+                           from.view.removeFromSuperview()
+                           from.endAppearanceTransition()
+                           from.removeFromParent()
 
-                        if finished {
-                            to.didMove(toParent: self)
-                            to.endAppearanceTransition()
-                        }
+                           if finished {
+                               to.didMove(toParent: self)
+                               to.endAppearanceTransition()
+                           }
 
-                        completion?(finished)
+                           completion?(finished)
                        })
     }
 }
 
 // MARK: Status Bar
+
 extension ContainerViewController {
     override var childForStatusBarStyle: UIViewController? {
         content
@@ -223,6 +224,7 @@ extension ContainerViewController {
 }
 
 // MARK: Home Indicator
+
 extension ContainerViewController {
     override var childForHomeIndicatorAutoHidden: UIViewController? {
         content
@@ -230,6 +232,7 @@ extension ContainerViewController {
 }
 
 // MARK: Screen-edge gestures
+
 extension ContainerViewController {
     override var childForScreenEdgesDeferringSystemGestures: UIViewController? {
         content

@@ -5,14 +5,15 @@
 //  Created by Matteo Matassoni on 16/04/2021.
 //
 
-import Foundation
 import Combine
+import Foundation
 import StargazerApiClient
 import StargazerApiClientCombine
 
 public final class FetcherViewModel {
     // MARK: Public Publishers
-    @Published public var selectedRepository: Repository? = nil
+
+    @Published public var selectedRepository: Repository?
 
     @Published public private(set) var isLoading = false
     @Published public private(set) var error: Error?
@@ -21,20 +22,24 @@ public final class FetcherViewModel {
     @Published public private(set) var hasMoreData = true
 
     // MARK: Private Combine Properties
+
     private var subscriptions: Set<AnyCancellable> = []
     private let loadingSubject = PassthroughSubject<Bool, Never>()
     private let errorSubject = PassthroughSubject<Error, Never>()
     private let stargazersSubject = CurrentValueSubject<[Stargazer], Never>([])
 
     // MARK: Private Api Client Properties
+
     private let stargazerApiClient: StargazerApiClientType
     private let firstPage: Int
     private let pageSize: Int
 
     // MARK: Private Pagination Properties
+
     private var nextPage: Int?
 
     // MARK: Initialization
+
     public init(
         stargazerApiClient: StargazerApiClientType,
         firstPage: Int = 1,
@@ -48,10 +53,11 @@ public final class FetcherViewModel {
     }
 
     // MARK: Public APIs
+
     public func fetchMoreStargazers() {
         guard let selectedRepository = selectedRepository
         else { return }
-        
+
         performFetchStargazers(ofRepository: selectedRepository)
     }
 
@@ -68,6 +74,7 @@ public final class FetcherViewModel {
 }
 
 // MARK: Private APIs
+
 private extension FetcherViewModel {
     func setupBindings() {
         $selectedRepository
@@ -85,7 +92,7 @@ private extension FetcherViewModel {
 
     func performFetchStargazers(
         ofRepository repository: Repository,
-        isRefresh: Bool = false
+        isRefresh _: Bool = false
     ) {
         guard !isLoading,
               hasMoreData
@@ -103,7 +110,7 @@ private extension FetcherViewModel {
             self?.isLoading = false
 
             switch completion {
-            case .failure(let error):
+            case let .failure(error):
                 self?.error = error
             case .finished:
                 break

@@ -19,6 +19,7 @@ class Cell: UICollectionViewCell {
             textLabel?.text = nil
         }
     }
+
     @IBOutlet var detailTextLabel: UILabel? {
         didSet {
             detailTextLabel?.text = nil

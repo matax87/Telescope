@@ -9,7 +9,6 @@ import UIKit
 
 /// Coordinator protocol. Coordinators are responsible to handle navigations and object creations.
 protocol Coordinator: AnyObject {
-
     typealias DependencyRepresentable = ViewModelFactory & ViewControllerFactory
 
     /// childCoordinators: child coordinators should be append to this array to keep them alive!

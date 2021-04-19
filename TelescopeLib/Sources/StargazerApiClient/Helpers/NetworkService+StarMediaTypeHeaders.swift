@@ -12,7 +12,7 @@ extension NetworkService {
         HeadersAddingNetworkService(
             wrapped: self,
             headers: [
-                "Accept": "application/vnd.github.v3.star+json",
+                "Accept": "application/vnd.github.v3.star+json"
             ]
         )
     }

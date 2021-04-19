@@ -20,6 +20,7 @@ final class PaginationParser {
 }
 
 // MARK: Private APIs
+
 private extension PaginationParser {
     static func page(from link: String?) -> Int? {
         guard

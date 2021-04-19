@@ -5,12 +5,12 @@
 //  Created by Matteo Matassoni on 16/04/2021.
 //
 
-import Foundation
 import Combine
+import Foundation
 import StargazerApiClient
 
-extension StargazerApiClientType {
-    public func fetchStagazerList(
+public extension StargazerApiClientType {
+    func fetchStagazerList(
         ofRepositoryWithOwner owner: String,
         name: String,
         page: Int? = nil,

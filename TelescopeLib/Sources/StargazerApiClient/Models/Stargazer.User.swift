@@ -7,8 +7,8 @@
 
 import Foundation
 
-extension Stargazer {
-    public struct User {
+public extension Stargazer {
+    struct User {
         public let login: String
         public let id: Int
         public let nodeId: String
@@ -31,9 +31,11 @@ extension Stargazer {
 }
 
 // MARK: Equatable
+
 extension Stargazer.User: Equatable {}
 
 // MARK: Hashable
+
 extension Stargazer.User: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -41,4 +43,5 @@ extension Stargazer.User: Hashable {
 }
 
 // MARK: Decodable
+
 extension Stargazer.User: Decodable {}

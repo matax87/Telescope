@@ -28,8 +28,8 @@ public final class Cache<Key: Hashable, Value> {
     }
 }
 
-extension Cache {
-    public subscript(key: Key) -> Value? {
+public extension Cache {
+    subscript(key: Key) -> Value? {
         get {
             value(forKey: key)
         }

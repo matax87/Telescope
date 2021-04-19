@@ -6,10 +6,10 @@
 //
 
 import Foundation
-import ViewModels
-import NetworkToolbox
 import ImageFetcher
+import NetworkToolbox
 import StargazerApiClient
+import ViewModels
 
 final class DependencyContainer {
     private let networkService: NetworkService
@@ -20,6 +20,7 @@ final class DependencyContainer {
 }
 
 // MARK: ViewModelFactory
+
 extension DependencyContainer: ServiceFactory {
     func makeImageFetcher() -> ImageFetcherType {
         ImageFetcher(networkService: networkService)
@@ -31,6 +32,7 @@ extension DependencyContainer: ServiceFactory {
 }
 
 // MARK: ViewModelFactory
+
 extension DependencyContainer: ViewModelFactory {
     func makeFetcherViewModel() -> FetcherViewModel {
         FetcherViewModel(stargazerApiClient: makeStargazerApiClient())
@@ -42,6 +44,7 @@ extension DependencyContainer: ViewModelFactory {
 }
 
 // MARK: ViewControllerFactory
+
 extension DependencyContainer: ViewControllerFactory {
     func makeListViewController() -> ListViewController {
         let result = ListViewController()

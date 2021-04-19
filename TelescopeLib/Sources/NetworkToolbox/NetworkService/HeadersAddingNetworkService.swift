@@ -10,7 +10,7 @@ import Foundation
 public final class HeadersAddingNetworkService: NetworkService {
     let wrapped: NetworkService
     let headers: [String: String]
-    
+
     public init(
         wrapped: NetworkService,
         headers: [String: String]
@@ -18,7 +18,7 @@ public final class HeadersAddingNetworkService: NetworkService {
         self.wrapped = wrapped
         self.headers = headers
     }
-    
+
     public func fetchData(
         with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
@@ -34,13 +34,13 @@ public final class HeadersAddingNetworkService: NetworkService {
     }
 }
 
-extension NetworkService {
-    public func addingJSONHeaders() -> NetworkService {
+public extension NetworkService {
+    func addingJSONHeaders() -> NetworkService {
         HeadersAddingNetworkService(
             wrapped: self,
             headers: [
                 "Content-Type": "application/json",
-                "Accept": "application/json",
+                "Accept": "application/json"
             ]
         )
     }

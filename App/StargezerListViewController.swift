@@ -5,10 +5,10 @@
 //  Created by Matteo Matassoni on 14/04/2021.
 //
 
-import UIKit
 import Combine
-import ViewModels
 import StargazerApiClient
+import UIKit
+import ViewModels
 
 class StargezersController: UIViewController {
     let viewModel: StargazerListViewModel
@@ -17,9 +17,9 @@ class StargezersController: UIViewController {
 
     private var subscriptions: Set<AnyCancellable> = []
 
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Stargazer>! = nil
-    private var currentSnapshot: NSDiffableDataSourceSnapshot<Section, Stargazer>! = nil
-    private var collectionView: UICollectionView! = nil
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Stargazer>!
+    private var currentSnapshot: NSDiffableDataSourceSnapshot<Section, Stargazer>!
+    private var collectionView: UICollectionView!
     private lazy var formatter: RelativeDateTimeFormatter = { formatter in
         formatter.dateTimeStyle = .named
         formatter.formattingContext = .beginningOfSentence
@@ -27,13 +27,14 @@ class StargezersController: UIViewController {
     }(RelativeDateTimeFormatter())
 
     // MARK: Initalization
+
     init(viewModel: StargazerListViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("\(#function) has not been implemented")
     }
 
@@ -47,18 +48,20 @@ class StargezersController: UIViewController {
 }
 
 // MARK: UIScrollViewDelegate
+
 extension StargezersController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
 
         if offsetY > contentHeight - scrollView.frame.height {
-            //viewModel.fetchStargazers(ofRepository: repository)
+            // viewModel.fetchStargazers(ofRepository: repository)
         }
     }
 }
 
 // MARK: Private APIS
+
 private extension StargezersController {
     private func setupBindings() {
         viewModel.loadingPublisher
@@ -80,7 +83,6 @@ private extension StargezersController {
                 self?.updateUI(stargazer: $0, animated: true)
             }
             .store(in: &subscriptions)
-
     }
 
     enum Section {
@@ -89,9 +91,9 @@ private extension StargezersController {
 
     func columnCount(for layoutEnviroment: NSCollectionLayoutEnvironment) -> Int {
         switch layoutEnviroment.container.effectiveContentSize.width {
-        case 0..<300:
+        case 0 ..< 300:
             return 1
-        case 300..<500:
+        case 300 ..< 500:
             return 2
         default:
             return 3
@@ -100,7 +102,7 @@ private extension StargezersController {
 
     func createLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout {
-            (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            (_: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             let columns = self.columnCount(for: layoutEnvironment)
 
             let itemSize = NSCollectionLayoutSize(
@@ -145,7 +147,7 @@ private extension StargezersController {
             bundle: Bundle(for: Cell.self)
         )
         let cellRegistration: UICollectionView.CellRegistration<Cell, Stargazer>
-        cellRegistration = .init(cellNib: cellNib) { cell, indexPath, stargazer in
+        cellRegistration = .init(cellNib: cellNib) { cell, _, stargazer in
             // Populate the cell with our item description.
             cell.textLabel?.text = stargazer.user.login
             cell.detailTextLabel?.text = self.formatter.localizedString(
@@ -168,7 +170,8 @@ private extension StargezersController {
         collectionView = UICollectionView(
             frame: view.bounds,
             collectionViewLayout: createLayout(
-            ))
+            )
+        )
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
         collectionView.refreshControl = UIRefreshControl()
@@ -192,4 +195,3 @@ private extension StargezersController {
         dataSource.apply(currentSnapshot, animatingDifferences: animated)
     }
 }
-

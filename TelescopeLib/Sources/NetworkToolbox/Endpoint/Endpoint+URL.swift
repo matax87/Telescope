@@ -7,8 +7,8 @@
 
 import Foundation
 
-extension Endpoint {
-    public func makeURL(withHost host: String) -> URL {
+public extension Endpoint {
+    func makeURL(withHost host: String) -> URL {
         var components = URLComponents()
         components.scheme = "https"
         components.host = host

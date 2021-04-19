@@ -13,16 +13,16 @@ public final class LoggingNetworkService: NetworkService {
 
     let wrapped: NetworkService
     let logger: Logger
-    
+
     public init(wrapped: NetworkService, logger: Logger) {
         self.wrapped = wrapped
         self.logger = logger
     }
-    
+
     public func fetchData(
         with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
-    ) -> NTBCancellable{
+    ) -> NTBCancellable {
         log(request: request)
         return wrapped.fetchData(with: request) { [weak self] data, response, error in
             self?.log(
@@ -36,8 +36,8 @@ public final class LoggingNetworkService: NetworkService {
 }
 
 // MARK: Private APIs
-private extension LoggingNetworkService {
 
+private extension LoggingNetworkService {
     func log(request: URLRequest) {
         logger.debug("REQUEST: \(request.url?.absoluteString ?? Self.notAvailable)")
         logger.debug("METHOD: \(request.httpMethod ?? Self.notAvailable)")
@@ -66,8 +66,7 @@ private extension LoggingNetworkService {
 
     func log(response: URLResponse?, data: Data?, error: Error?) {
         let statusCode: String? = response
-            .flatMap { $0 as? HTTPURLResponse }
-            .flatMap { $0.statusCode }
+            .flatMap { ($0 as? HTTPURLResponse)?.statusCode }
             .flatMap(String.init)
         logger.debug("RESPONSE: \(statusCode ?? Self.notAvailable)")
         logger.debug("FROM: \(response?.url?.absoluteString ?? Self.notAvailable)")
@@ -76,7 +75,7 @@ private extension LoggingNetworkService {
            !httpHeaders.isEmpty {
             logger.debug("HEADERS:")
             for (key, value) in httpHeaders {
-                logger.debug("- \(key): \(String(describing:value))")
+                logger.debug("- \(key): \(String(describing: value))")
             }
         }
 
@@ -178,8 +177,8 @@ private extension HTTPURLResponse {
     }
 }
 
-extension NetworkService {
-    public func addingLogger(_ logger: Logger) -> NetworkService {
+public extension NetworkService {
+    func addingLogger(_ logger: Logger) -> NetworkService {
         LoggingNetworkService(wrapped: self, logger: logger)
     }
 }
