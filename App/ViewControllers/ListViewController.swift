@@ -9,6 +9,19 @@ import ImageFetcher
 import StargazerApiClient
 import UIKit
 
+// MARK: - ListSelectionResponse
+
+struct ListSelectionResponse: OptionSet {
+    let rawValue: Int
+
+    init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    static let none = ListSelectionResponse([])
+    static let deselect = ListSelectionResponse(rawValue: 1 << 0)
+}
+
 // MARK: - ListViewController
 
 class ListViewController: UIViewController {
@@ -32,6 +45,7 @@ class ListViewController: UIViewController {
 
     var imageFetcher: ImageFetcherType!
 
+    var didSelectItemHandler: ((Item) -> ListSelectionResponse?)?
     var willDisplayLastItemHandler: (() -> Void)?
 
     override func viewDidLoad() {
@@ -46,6 +60,22 @@ class ListViewController: UIViewController {
 // MARK: UICollectionViewDelegate
 
 extension ListViewController: UICollectionViewDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        guard let selectedItem = dataSource.itemIdentifier(for: indexPath)
+        else { return }
+
+        let response = didSelectItemHandler?(selectedItem) ?? [.deselect]
+        if response.contains(.deselect) {
+            collectionView.deselectItem(
+                at: indexPath,
+                animated: true
+            )
+        }
+    }
+
     func collectionView(
         _: UICollectionView,
         willDisplay _: UICollectionViewCell,
