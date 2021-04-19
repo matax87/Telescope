@@ -36,6 +36,19 @@ class ListViewController: UIViewController {
             guard isViewLoaded
             else { return }
 
+            // Stop unneeded image fetching
+            if let imageFetcher = imageFetcher {
+                let oldImageURLs = Set(oldValue.map(\.user.avatarUrl))
+                let newImageURLs = Set(items.map(\.user.avatarUrl))
+                let uselessImageURLs =
+                    oldImageURLs.subtracting(newImageURLs)
+                        .compactMap(URL.init(string:))
+                uselessImageURLs.forEach { uselessImageURL in
+                    imageFetcher.cancelFetching(fromUrl: uselessImageURL)
+                }
+            }
+
+            // Update items
             let animated = view.window != nil
             updateUI(items: items, animated: animated)
         }
