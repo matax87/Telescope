@@ -22,6 +22,12 @@ let package = Package(
                 "ViewModels"
             ]
         ),
+        .library(
+            name: "MockNetworkServiceImplementations",
+            targets: [
+                "MockNetworkServiceImplementations"
+            ]
+        )
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -37,6 +43,12 @@ let package = Package(
         .target(
             name: "NetworkToolbox",
             dependencies: []
+        ),
+        .target(
+            name: "MockNetworkServiceImplementations",
+            dependencies: [
+                "NetworkToolbox"
+            ]
         ),
         .target(
             name: "ImageFetcher",
@@ -60,6 +72,22 @@ let package = Package(
             ],
             resources: [
                 .process("Resources")
+            ]
+        ),
+        .testTarget(
+            name: "NetworkToolboxTests",
+            dependencies: [
+                "NetworkToolbox"
+            ]
+        ),
+        .testTarget(
+            name: "ViewModelsTests",
+            dependencies: [
+                "ViewModels",
+                "MockNetworkServiceImplementations"
+            ],
+            resources: [
+                .process("Fixtures")
             ]
         )
     ]
